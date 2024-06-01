@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Management</title>
+    <style>
+        /* Style the input fields */
+        body{
+            height:700px;
+            width:900px;
+        }
+        .inputField {
+            width: 300px;
+            margin-bottom: 10px;
+        }
+
+        /* Hide the form initially */
+        #form_items {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Input fields for adding tasks -->
+    <div id="form_items">
+        <input type="text" id="taskNameInput" class="inputField" placeholder="Task Name">
+        <input type="date" id="taskDateInput" class="inputField">
+        <input type="time" id="taskTimeInput" class="inputField">
+        <button id="addButton">Add</button>
+    </div>
+    
+    <!-- Button to display the add task form -->
+    <button id="taskAdd">Add Task</button>
+
+    <!-- Task list -->
+    <ul id="taskList"></ul>
+
+    <!-- Include the JavaScript code -->
+    <script>
+        // Initialize the tasks array
+        var tasks = [];
+
+        function addTask(task) {
+    tasks.push(task);
+    tasks.sort(function(a, b) {
+        // Sort by date first, then by time
+        if (a.date === b.date) {
+            return a.time.localeCompare(b.time);
+        }
+        return a.date.localeCompare(b.date);
+    });
+    updateTaskList();
+}
+
+// Function to update the task list in the UI
+function updateTaskList() {
+    var taskList = document.getElementById('taskList');
+    taskList.innerHTML = ''; // Clear the existing list
+
+    tasks.forEach(function(task) {
+        var taskItem = document.createElement('li');
+        taskItem.className = 'taskItem';
+        taskItem.textContent = task.name + ' - Due Date: ' + task.date + ' Due Time: ' + task.time;
+        taskList.appendChild(taskItem);
+    });
+}
+
+// Call updateTaskList() initially to populate the task list when the page loads
+updateTaskList(); 
+
+// Event listener for "Add Task" button
+document.getElementById('taskAdd').addEventListener('click', function() {
+    document.getElementById('form_items').style.display = 'block';
+});
+
+// Event listener for "Add" button in the form
+document.getElementById('addButton').addEventListener('click', function() {
+    var taskNameInput = document.getElementById('taskNameInput');
+    var taskDateInput = document.getElementById('taskDateInput');
+    var taskTimeInput = document.getElementById('taskTimeInput');
+
+    var taskName = taskNameInput.value; // Get the task name
+    var taskDate = taskDateInput.value; // Get the task date
+    var taskTime = taskTimeInput.value; // Get the task time
+
+    if (taskName !== '' && taskDate !== '' && taskTime !== '') {
+        // If all fields are filled, add the task
+        var task = {
+            name: taskName,
+            date: taskDate,
+            time: taskTime
+        };
+        addTask(task);
+        console.log('Task added:', task);
+        taskNameInput.value = ''; // Clear the task name input field
+        taskDateInput.value = ''; // Clear the task date input field
+        taskTimeInput.value = ''; // Clear the task time input field
+        document.getElementById('form_items').style.display = 'none'; // Hide the form after adding a task
+    } else {
+        // If any field is empty, prompt the user to fill all fields
+        alert('Please fill in all fields!');
+    }
+});
+    </script>
+</body>
+</html>
